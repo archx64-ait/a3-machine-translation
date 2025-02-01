@@ -37,33 +37,44 @@ class NLPFormView(FormView):
     model.eval()
 
     def translate(self, prompt):
+        # transform the input text into source tokens
         source_tokens = text_transform[SRC_LANGUAGE](prompt).to(device)
         source_tokens = source_tokens.reshape(1, -1)
 
+        # initialize the input tokens with the end-of-sequence token
         input_token_sequence = [EOS_IDX]
         output_token_sequence = []
 
+        # create the source mask for the encoder
         source_mask = self.model.make_src_mask(source_tokens)
 
+        # encode the source tokens
         with torch.no_grad():
             encoded_output = self.model.encoder(source_tokens, source_mask)
 
+        # generate the target tokens sequentially
         for i in range(self.seq_length):
             with torch.no_grad():
+
+                # prepare the input tokens for the decoder
                 decoder_input = torch.LongTensor(input_token_sequence).unsqueeze(0).to(device)
                 target_mask = self.model.make_trg_mask(decoder_input)
 
+                # eecode the output
                 decoder_output, _ = self.model.decoder(
                     decoder_input, encoded_output, target_mask, source_mask
                 )
                 predicted_token = decoder_output.argmax(2)[:, -1].item()
 
+            # add the predicted token to the input and output sequences
             input_token_sequence.append(predicted_token)
             output_token_sequence.append(predicted_token)
 
+            # stop the loop as soon as the end-of-sequence token is predicted
             if predicted_token == EOS_IDX:
                 break
 
+        # change the output tokens to the target language text
         target_tokens = [vocab_transform[TRG_LANGUAGE].get_itos()[token] for token in output_token_sequence]
         translated_text = "".join(target_tokens[1:-1])
 
