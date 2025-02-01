@@ -25,6 +25,8 @@ Navigate to the ```code``` directory. The sequence-to-sequence neural networks a
 
 ## Evaluation and Verification
 
+All models are trained only 5 epoches. It takes around 17-18 seconds to complete one epoch for general and multiplicative models. The addictive attention model takes approximately 47 seconds to complete an epoch. Batch sizes for general and multiplicative attention models are 128. Additive Attention model uses only 16 batches since it is memory intensive, which causes GPU memory to run out and crashes the training process.
+
 | Attentions | Training Loss | Training PPL | Validation Loss | Validation PPL | Total Training Time |
 |------------|---------------|--------------|-----------------|----------------|---------------------|
 | General Attention        | 3.735 | 41.908 | 3.995 | 54.324 | 1m 26s 880ms |
@@ -44,13 +46,13 @@ Navigate to the ```code``` directory. The sequence-to-sequence neural networks a
 
 ### Performance Plots Showing Training and Validation Loss
 
-General Attention
+General Attention Loss Curve
 <img src='code/figures/general-attention-loss.png' alt='General Attention Loss'>
 
-Multiplicative Attention
+Multiplicative Attention  Loss Curve
 <img src='code/figures/multiplicative-attention-loss.png' alt='Multiplicative Attention Loss'>
 
-Additive Attention
+Additive Attention  Loss Curve
 <img src='code/figures/additive-attention-loss.png' alt='Additive Attention Loss'>
 
 ### Attention Maps
