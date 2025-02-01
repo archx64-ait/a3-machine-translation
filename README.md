@@ -1,5 +1,10 @@
 # a3-machine-translation
 
+## Student Information
+
+- ID: st124974
+- Name: Kaung Sithu
+
 ## Get Language Pair
 
 1. Dataset used for translation between English and Burmese
