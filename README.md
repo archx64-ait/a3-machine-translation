@@ -7,6 +7,8 @@
 
 ## Get Language Pair
 
+### Dataset
+
 1. Dataset used for translation between English and Burmese
 
     - Ye Kyaw Thu, Win Pa Pa, Masao Utiyama, Andrew Finch, and Eiichiro Sumita. (2016). "Introducing the Asian Language Treebank (ALT)" Oriental COCOSDA. <https://www2.nict.go.jp/astrec-att/member/mutiyama/ALT/>
@@ -19,6 +21,35 @@
     - The final dataset, now organized into training, validation, and test splits, is uploaded to the Hugging Face Hub. This makes the dataset publicly accessible or available for private use, allowing others to easily load and use it for machine learning tasks.
     - The code for preprocessing can be found in ```code/preprocessing.ipynb```. The raw and cleaned data files are in ```code/data/```.
     - The preprocessed dataset on Hugging Face <https://huggingface.co/datasets/archx64/english-burmese-parallel>
+
+### Tokenizing Burmese
+
+This tokenizer relies on ICU4C/ICU4J (International Components for Unicode) <https://icu.unicode.org/>, accessed via the PyICU Python wrapper. PyICU provides bindings for ICU's text processing tools, which handle complex languages like Burmese. PyICU for Windows is downloaded from this link: <https://github.com/cgohlke/pyicu-build/releases>.
+
+```python
+from icu import BreakIterator, Locale
+
+TRG_LANGUAGE = 'my'
+
+def burmese_tokenizer(sentence):
+    bi = BreakIterator.createWordInstance(Locale(TRG_LANGUAGE))
+    bi.setText(sentence)
+    tokens = []
+    start = bi.first()
+    for end in bi:
+        token = sentence[start:end].strip()  # remove leading/trailing spaces
+        if token:  # only add non-empty tokens
+            tokens.append(token)
+        start = end
+    return tokens
+```
+
+The function `burmese_tokenizer` executes the following:
+
+- initializes a BreakIterator instance for word segmentation in Burmese
+- sets the input sentence for iterator
+- iterates over break points to extract tokens
+- returns a list of words
 
 ## Experiment with Attention Mechanisms
 
